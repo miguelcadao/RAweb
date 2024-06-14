@@ -1,0 +1,11 @@
+Model Information:
+* title:	WhatsApp 3D-logo
+* source:	https://sketchfab.com/3d-models/whatsapp-3d-logo-e51c67d110014bcdb71adf678f1bfc81
+* author:	AlbertVictory (https://sketchfab.com/albert_victory)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "WhatsApp 3D-logo" (https://sketchfab.com/3d-models/whatsapp-3d-logo-e51c67d110014bcdb71adf678f1bfc81) by AlbertVictory (https://sketchfab.com/albert_victory) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

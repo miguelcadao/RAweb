@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+<head>
+    <!-- Metadatos y enlaces a bibliotecas externas -->
+    <meta charset="utf-8">
+    <!-- A-Frame para crear experiencias de realidad virtual -->
+    <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1.3.0/dist/aframe-master.min.js"></script>
+    <!-- AR.js para realidad aumentada con A-Frame -->
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+    <!-- jsQR para la detección de códigos QR -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.3.1/dist/jsQR.js"></script>
+    <style>
+        /* Estilos para pantallas anchas (más de 900px) */
+        @media (min-width: 900px) {
+            body { /* Estilos para el body */
+                margin: 0;  /* Elimina los márgenes predeterminados del body */
+                overflow: hidden;  /* Oculta cualquier contenido que se desborde del body */
+                display: flex;  /* Usa flexbox para el layout del body */
+                justify-content: center;  /* Centra el contenido horizontalmente */
+                align-items: center;  /* Centra el contenido verticalmente */
+                height: 100vh;  /* Hace que el body ocupe el 100% de la altura de la ventana */
+                background-color: #72e1f5;  /* Establece un color de fondo azul claro */
+            }
+            #video {  /* Estilos para el video */
+                width: 90vw;  /* Establece el ancho del video al 90% del ancho de la ventana */
+                height: 80vh;  /* Establece la altura del video al 80% de la altura de la ventana */
+                object-fit: cover;  /* Escala el video para cubrir completamente el área, recortando si es necesario */
+                border: 2px solid #000000;  /* Añade un borde negro de 2px alrededor del video */
+            }
+            h1 {  /* Estilos para el h1 */
+                position: absolute;  /* Posiciona el h1 de forma absoluta respecto al body */
+                top: 10vh;  /* Coloca el h1 a 10% de la altura de la ventana desde la parte superior */
+                left: 50vw;  /* Coloca el h1 a 50% del ancho de la ventana desde la parte izquierda */
+                transform: translateX(-50%);  /* Ajusta el h1 para que se centre horizontalmente */
+                color: rgb(0, 0, 0);  /* Establece el color del texto en negro */
+                background-color: rgba(255, 255, 255, 0.7);  /* Establece un fondo blanco semitransparente */
+                padding: 10px;  /* Añade un relleno de 10px alrededor del texto */
+                text-align: center;  /* Centra el texto dentro del h1 */
+                font-size: 16px;  /* Establece el tamaño de la fuente en 16px */
+            }
+        }
+        /* Estilos para pantallas estrechas (menos de 900px) */
+        @media (max-width: 900px) {
+            body { /* Estilos para el body */
+                margin: 0;  /* Elimina los márgenes predeterminados del body */
+                overflow: hidden;  /* Oculta cualquier contenido que se desborde del body, evitando barras de desplazamiento */
+                display: flex;  /* Utiliza Flexbox para el layout del body, facilitando la alineación y distribución del contenido */
+                justify-content: center;  /* Centra el contenido horizontalmente dentro del body */
+                align-items: center;  /* Centra el contenido verticalmente dentro del body */
+                height: 100vh;  /* Establece la altura del body al 100% de la altura de la ventana del navegador */
+                background-color: #72e1f5;  /* Asigna un color de fondo azul claro al body */
+            }
+            .titulo { /* Estilos para el titulo del h1 */
+                position: absolute;  /* Posiciona el h1 de forma absoluta respecto al body */
+                top: 10vh;  /* Coloca el h1 a 10% de la altura de la ventana desde la parte superior */
+                left: 50vw;  /* Coloca el h1 a 50% del ancho de la ventana desde la parte izquierda */
+                transform: translateX(-50%);  /* Ajusta el h1 para que se centre horizontalmente */
+                color: rgb(0, 0, 0);  /* Establece el color del texto en negro */
+                background-color: rgba(255, 255, 255, 0.7);  /* Establece un fondo blanco semitransparente (70% de opacidad) para el h1 */
+                padding: 10px;  /* Añade un relleno de 10px alrededor del texto */
+                margin-left: 285px;  /* Añade un margen izquierdo de 285px al h1 */
+                font-size: 28px;  /* Establece el tamaño de la fuente en 28px */
+            }
+            #video { /* Estilos para el video */
+                width: 241vw;  /* Define el ancho del video al 241% del ancho de la ventana del navegador */
+                height: 97vh;  /* Define la altura del video al 97% de la altura de la ventana del navegador */
+                object-fit: cover;  /* Escala el video para cubrir completamente el área designada, recortando si es necesario para mantener la relación de aspecto */
+                border: 2px solid #000000;  /* Añade un borde negro de 2px alrededor del video para destacarlo visualmente */
+                margin-top: 500px;  /* Añade un margen superior de 500px al video */
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <!-- Título que indica al usuario qué hacer -->
+    <h1 class="titulo">Apunte hacia el QR que quiere visualizar</h1>
+    <!-- Elemento de video para mostrar la cámara -->
+    <video id="video" autoplay></video>
+    <title>QR</title>
+    
+    <script>
+        // Acceso a la cámara del dispositivo
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }).then(function(stream) {
+            const video = document.getElementById('video');  // Obtener el elemento de video
+            video.srcObject = stream;  // Asignar el stream de video de la cámara al elemento de video
+            video.setAttribute('playsinline', true); // Necesario para evitar fullscreen en iOS
+            video.play();  // Iniciar la reproducción del video
+            requestAnimationFrame(tick);  // Iniciar la función tick en el próximo frame de animación
+        });
+    
+        function tick() {
+            const video = document.getElementById('video');  // Obtener el elemento de video
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                // Crear un canvas para extraer el frame del video
+                const canvas = document.createElement('canvas');  // Crear un nuevo elemento canvas
+                canvas.width = video.videoWidth;  // Establecer el ancho del canvas igual al ancho del video
+                canvas.height = video.videoHeight;  // Establecer la altura del canvas igual a la altura del video
+                const context = canvas.getContext('2d');  // Obtener el contexto de dibujo 2D del canvas
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);  // Dibujar el frame actual del video en el canvas
+                
+                // Obtener los datos de la imagen
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);  // Obtener los datos de la imagen del canvas
+                
+                // Usar jsQR para encontrar el código QR en la imagen
+                const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                    inversionAttempts: 'dontInvert',  // Configuración para no invertir los colores durante la búsqueda del QR
+                });
+    
+                if (code) {
+                    // Redirigir a la URL del código QR
+                    window.location.href = code.data;  // Si se encuentra un código QR, redirigir a la URL contenida en el QR
+                }
+            }
+            // Repetir la función tick para escanear continuamente
+            requestAnimationFrame(tick);  // Llamar a tick nuevamente en el próximo frame de animación
+        }
+    </script>
+</body>
+</html>

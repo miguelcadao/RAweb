@@ -1,0 +1,355 @@
+<!doctype html>
+<html>
+<head>
+    <!-- Importa la biblioteca A-Frame para construir experiencias de realidad virtual y aumentada -->
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <!-- Importa AR.js para añadir capacidades de realidad aumentada a A-Frame -->
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <!-- Importa un detector de gestos para manejar interacciones táctiles -->
+    <script src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-detector.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-handler.js"></script>
+    <style>
+        /* Estilos para dispositivos con un ancho mínimo de 900px */
+        @media (min-width: 900px) {
+            h1 {
+                position: absolute; /* El título se posicionará de forma absoluta */
+                top: 5vh; /* Se posiciona a 5% de la altura de la ventana desde la parte superior */                
+                left: 50vw; /* Se posiciona en el 50% del ancho de la ventana desde la parte izquierda */                
+                transform: translateX(-50%); /* Mueve el elemento horizontalmente a la izquierda en un 50% de su propia anchura, centrando así el elemento */
+                color: rgb(0, 0, 0); /* Define el color del texto del título */
+                background-color: rgba(255, 255, 255, 0.7); /* Define un color de fondo blanco con una transparencia del 70% */
+                padding: 10px; /* Añade un relleno interno de 10 píxeles alrededor del texto */
+                text-align: center; /* Centra el texto dentro del elemento */
+                z-index: 1; /* Asegura que el elemento se muestra por encima de otros elementos, con una prioridad de nivel 1 */
+                font-size: 16px; /* Define el tamaño de la fuente del título */
+            }
+            button {
+                position: absolute; /* El botón se posicionará de forma absoluta */                
+                top: 5vh; /* Se posiciona a 5% de la altura de la ventana desde la parte superior */
+                left: 5vw; /* Se posiciona a 5% del ancho de la ventana desde la parte izquierda */
+                padding: 10px 20px; /* Añade un relleno interno de 10 píxeles en la parte superior e inferior y de 20 píxeles en los lados */
+                font-size: 16px; /* Define el tamaño de la fuente del botón */
+                background-color: #007BFF; /* Define el color de fondo del botón */
+                color: white; /* Define el color del texto del botón */
+                border: none; /* Elimina el borde del botón */
+                border-radius: 5px; /* Redondea las esquinas del botón con un radio de 5 píxeles */
+                cursor: pointer; /* Cambia el cursor a un puntero cuando el usuario pasa sobre el botón, indicando que es interactivo */
+                z-index: 2; /* Asegura que el botón se muestra por encima de otros elementos, con una prioridad de nivel 2 */
+                background-color: #549deb; /* Define otro color de fondo para el botón (parece un duplicado, el primero se puede eliminar) */
+            }
+            .titulo {
+                font-size: 16px; /* Define el tamaño de la fuente para los elementos con la clase "titulo" */
+            }
+        }
+        
+        /* Estilos para dispositivos con un ancho máximo de 900px */
+        @media (max-width: 899px) {
+            .titulo {
+                position: absolute; /* El título se posicionará de forma absoluta */
+                top: 1vh; /* Se posiciona a 1% de la altura de la ventana desde la parte superior */
+                left: 50vw; /* Se posiciona en el 50% del ancho de la ventana desde la parte izquierda */
+                transform: translateX(-50%); /* Mueve el elemento horizontalmente a la izquierda en un 50% de su propia anchura, centrando así el elemento */
+                color: rgb(0, 0, 0); /* Define el color del texto del título */
+                background-color: rgba(255, 255, 255, 0.7); /* Define un color de fondo blanco con una transparencia del 70% */
+                padding: 10px; /* Añade un relleno interno de 10 píxeles alrededor del texto */
+                text-align: center; /* Centra el texto dentro del elemento */
+                z-index: 1; /* Asegura que el elemento se muestra por encima de otros elementos, con una prioridad de nivel 1 */
+                font-size: 10px; /* Define el tamaño de la fuente del título */
+            }
+            button {
+                position: absolute; /* El botón se posicionará de forma absoluta */                
+                top: 3vh; /* Se posiciona a 3% de la altura de la ventana desde la parte superior */
+                left: 2vw; /* Se posiciona a 2% del ancho de la ventana desde la parte izquierda */
+                padding: 7px 10px; /* Añade un relleno interno de 7 píxeles en la parte superior e inferior y de 10 píxeles en los lados */
+                font-size: 10px; /* Define el tamaño de la fuente del botón */
+                background-color: #007BFF; /* Define el color de fondo del botón */
+                color: white; /* Define el color del texto del botón */
+                border: none; /* Elimina el borde del botón */
+                border-radius: 5px; /* Redondea las esquinas del botón con un radio de 5 píxeles */
+                cursor: pointer; /* Cambia el cursor a un puntero cuando el usuario pasa sobre el botón, indicando que es interactivo */
+                z-index: 2; /* Asegura que el botón se muestra por encima de otros elementos, con una prioridad de nivel 2 */
+            }
+            .titulo {
+                font-size: 10px; /* Define el tamaño de la fuente para los elementos con la clase "titulo" */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Contenedor principal de la escena -->
+    <div id="scene-container">
+        <!-- Título de la página -->
+        <h1 class="titulo">Apunte a la imagen que se encuentra en la parte superior del QR</h1>
+        <!-- Botón que enlaza a otra página -->
+        <button>
+            <a href="/views/index">Leer Qr</a>
+        </button>
+        
+        <!-- Escena de A-Frame con configuración de AR.js -->
+        <a-scene 
+            vr-mode-ui="enabled: false"  /* Deshabilita la interfaz de usuario de modo VR */
+            loading-screen="enabled: false" /* Deshabilita la pantalla de carga */
+            arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false" /* Configura AR.js para usar la mejor metodología de seguimiento y la cámara web como fuente */
+            gesture-detector  /* Habilita el detector de gestos */
+        >
+        
+            <!-- Define un marcador AR personalizado -->
+            <a-marker
+                id="animated-marker"
+                type="pattern"
+                preset="custom"
+                url="/assets/marker.patt" /* URL del marcador personalizado */
+                raycaster="objects: .clickable"
+                emitevents="true"
+                cursor="fuse: false; rayOrigin: mouse;"
+            >
+            <!-- Imagen del logo -->
+            <a-image src="/assets/logo_cuidadtecnopolis.jpeg" class="logo" alt="Logo"
+                rotation="-90 0 0" /* Rotación de la imagen */
+                id="logo-image"
+            ></a-image>
+
+                <!-- Plano de fondo -->
+                <a-plane 
+                    id="background"
+                    color="#007BFF" /* Color del plano */
+                    rotation="-90 0 0" /* Rotación del plano */                                      
+                ></a-plane>
+
+                <!-- Texto con información del invitado -->
+                <a-text id="texto"
+                    value="Cedula: <%= invitado.Cedula %>\n
+                           Tipo de Documento: <%= invitado.Tipodocumento %>\n
+                           Nombre: <%= invitado.Nombre %>\n
+                           Descripcion: <%= invitado.Descripcion %>\n
+                           Profesion: <%= invitado.Profesion %>\n
+                           Email: <%= invitado.Email %>\n
+                           Patrocinador: <%= invitado.Patrocinador %>"
+                    color="black" /* Color del texto */ 
+                    rotation="-90 0 0" /* Rotación del texto */                  
+                ></a-text>
+
+                <!-- Icono de WhatsApp si hay un teléfono disponible -->
+                <% if (invitado.Telefono) { %>
+                <a-entity      
+                    id="link-whatsapp"                         
+                    gltf-model="/assets/odjetos3d/whatsapp/scene.gltf" /* Modelo 3D del icono de WhatsApp */                    
+                    link-whatsapp /* Componente personalizado para el enlace de WhatsApp */
+                    rotation="180 90 -90" /* Rotación del modelo */
+                ></a-entity>
+                <% } %>
+
+                <!-- Icono de Instagram si hay un enlace de Instagram disponible -->
+                <% if (invitado.Patrocinador) { %>
+                <a-entity      
+                    id="link-instagram"                             
+                    gltf-model="/assets/odjetos3d/instagram/scene.gltf" /* Modelo 3D del icono de Instagram */                   
+                    rotation="0 0 90" /* Rotación del modelo */
+                    link-instagram /* Componente personalizado para el enlace de Instagram */
+                ></a-entity>
+                <% } %>
+
+                <!-- Icono de Facebook si hay un patrocinador disponible -->
+                <% if (invitado.Patrocinador) { %>
+                    <a-entity 
+                        id="link-facebook"                                      
+                        gltf-model="/assets/odjetos3d/facebook/scene.gltf"                        
+                        rotation="-90 0 360"
+                        link-facebook="https://wa.me/<%= invitado.Telefono %>"
+                    ></a-entity>
+                <% } %>
+
+                <!-- Icono de Twitter si hay un enlace de Twitter disponible -->
+                <% if (invitado.Patrocinador) { %>
+                <a-entity           
+                    id="link-twitter"                     
+                    gltf-model="/assets/odjetos3d/x/scene.gltf" /* Modelo 3D del icono de Twitter */                    
+                    rotation="-90 0 0" /* Rotación del modelo */
+                    link-twitter /* Componente personalizado para el enlace de Twitter */
+                ></a-entity>
+                <% } %>
+
+                <!-- Icono de Gmail si hay un email disponible -->
+                <% if (invitado.Email) { %>
+                <a-entity  
+                id="link-gmail"                                
+                    gltf-model="/assets/odjetos3d/gmail/scene.gltf" /* Modelo 3D del icono de Gmail */                    
+                    rotation="-90 -90 90" /* Rotación del modelo */
+                    class="clickable" /* Clase para hacer el modelo clicable */
+                    link-gmail /* Componente personalizado para el enlace de Gmail */                    
+                ></a-entity>
+                <% } %>
+            </a-marker>
+            <!-- Cámara de la escena -->
+            <a-entity camera>
+                
+            </a-entity>
+        </a-scene>
+    </div>
+
+    <script>
+        // Componente para el enlace de WhatsApp
+        AFRAME.registerComponent('#link-whatsapp', {
+            init: function () { // Función de inicialización del componente
+                this.el.addEventListener('click', function () { // Añade un evento de clic al elemento asociado a este componente
+                    const phone = '<%= invitado.Telefono %>'; // Obtiene el número de teléfono del invitado
+                    if (phone) { // Verifica si el número de teléfono está disponible
+                        const whatsappUrl = `https://wa.me/${phone}`; // Crea la URL de WhatsApp con el número de teléfono
+                        window.open(whatsappUrl, '_blank');  // Abre la URL en una nueva pestaña
+                    } else {
+                        console.warn('Número de teléfono no disponible'); // Muestra una advertencia si el número de teléfono no está disponible
+                    }
+                });
+            }
+        });
+    
+        // Componente para el enlace de Gmail
+        AFRAME.registerComponent('#link-gmail', {
+            init: function () {  // Función de inicialización del componente
+                this.el.addEventListener('click', function () {// Añade un evento de clic al elemento asociado a este componente
+                    const cedula = '<%= invitado.Cedula %>'; // Obtiene la cédula del invitado
+                    if (cedula) { // Verifica si la cédula está disponible
+                        // Realiza una solicitud para obtener el correo electrónico del invitado
+                        fetch(`/api/email/${cedula}`)
+                            .then(response => response.json()) // Convierte la respuesta a JSON
+                            .then(data => {
+                                const email = data.email; // Obtiene el correo electrónico de los datos de la respuesta
+                                if (email) { // Verifica si el correo electrónico está disponible
+                                    const mailToLink = `https://mail.google.com/mail/u/0/?view=cm&fs=1&to=${email}`; // Crea un enlace de mailto para Gmail
+                                    window.open(mailToLink, '_blank'); // Abre el enlace en una nueva pestaña
+                                } else {
+                                    console.warn('Correo electrónico no disponible'); // Muestra una advertencia si el correo electrónico no está disponible
+                                }
+                            })
+                            .catch(error => console.error('Error al obtener el correo:', error)); // Muestra un error si la solicitud falla
+                    } else {
+                        console.warn('Cédula no disponible'); // Muestra una advertencia si la cédula no está disponible
+                    }
+                });
+            }
+        });
+    
+        // Componente para el enlace de Instagram
+        AFRAME.registerComponent('#link-instagram', {
+            init: function () {// Función de inicialización del componente
+                this.el.addEventListener('click', function () { // Añade un evento de clic al elemento asociado a este componente
+                    const instagramUrl = '<%= invitado.Patrocinador %>'; // Obtiene la URL de Instagram del invitado
+                    if (instagramUrl) { // Verifica si la URL de Instagram está disponible
+                        window.open(instagramUrl, '_blank'); // Abre la URL de Instagram en una nueva pestaña
+                    } else {
+                        console.warn('URL de Instagram no disponible');// Muestra una advertencia si la URL de Instagram no está disponible
+                    }
+                });
+            }
+        });
+    
+        // Componente para el enlace de Facebook
+        AFRAME.registerComponent('#link-facebook', {
+            schema: {
+                url: { type: 'string' }
+            },
+            init: function () {
+                var data = this.data; // Accede a los datos del componente (la URL)
+                this.el.addEventListener('click', function () {
+                    console.log('Elemento Facebook clicado'); // Mensaje de depuración
+                    if (data.url) { // Verifica si la URL está disponible
+                        console.log('Abriendo URL de Facebook: ' + data.url); // Mensaje de depuración
+                        window.open(data.url, '_blank'); // Abre la URL en una nueva pestaña
+                    } else {
+                        console.warn('URL de Facebook no disponible');
+                    }
+                });
+            }
+        });
+        
+        // Componente para el enlace de Twitter
+        AFRAME.registerComponent('#link-twitter', {
+            
+            init: function () { // Función de inicialización del componente
+                this.el.addEventListener('click', function () { // Añade un evento de clic al elemento asociado a este componente
+                    const twitterUrl = '<%= invitado.Patrocinador %>'; // Obtiene la URL de Twitter del invitado
+                    if (twitterUrl) { // Verifica si la URL de Twitter está disponible
+                        window.open(twitterUrl, '_blank'); // Abre la URL de Twitter en una nueva pestaña
+                    } else {
+                        console.warn('URL de Twitter no disponible'); // Muestra una advertencia si la URL de Twitter no está disponible
+                    }
+                });
+            }
+        });
+    
+        // Función para ajustar los atributos de los elementos en función del tamaño de la ventana
+        function adjustAttributes() {
+            
+            const textElement = document.querySelector('#texto');// Selecciona el elemento de texto
+            const backgroundElement = document.querySelector('#background'); // Selecciona el elemento de fondo
+            const logoImage = document.querySelector('#logo-image'); // Selecciona la imagen del logo
+            const objetowhatsapp = document.querySelector('#link-whatsapp');
+            const objetoinstagram = document.querySelector('#link-instagram');
+            const objetofacebook = document.querySelector('#link-facebook');
+            const objetotwitter = document.querySelector('#link-twitter');
+            const objetogmail = document.querySelector('#link-gmail');
+    
+            // Verifica si el ancho de la ventana es mayor o igual a 900 píxeles
+            if (window.innerWidth >= 900) {
+                // Ajusta los atributos del texto para pantallas grandes
+                textElement.setAttribute('position', '0 0 0');                
+                textElement.setAttribute('scale', '5 5 5');
+                textElement.setAttribute('width', '1');
+                // Ajusta los atributos del fondo para pantallas grandes
+                backgroundElement.setAttribute('scale', '3.3 3.5 1');
+                backgroundElement.setAttribute('position', '1.5 -0.1 -0.1');
+                // Ajusta los atributos de la imagen del logo para pantallas grandes
+                logoImage.setAttribute('position', '2.8 0 -1.5');
+                logoImage.setAttribute('scale', '0.7 0.7 0.7');
+                //Ajusta lod atributos de whatsapp 
+                objetowhatsapp.setAttribute('position', '0.8 0 2');
+                objetowhatsapp.setAttribute('scale', '0.25 0.25 0.25');
+                //Ajusta los atributos de instagram
+                objetoinstagram.setAttribute('position', '0.3 0 2');
+                objetoinstagram.setAttribute('scale', '0.25 0.2 0.25');
+                //Ajusta los atributos de facebook
+                objetofacebook.setAttribute('position', '2.7 0 2.25');
+                objetofacebook.setAttribute('scale','0.2 0.2 0.2');
+                //Ajusta los atributos de twitter
+                objetotwitter.setAttribute('position', '1.4 -1.4 2.75');
+                objetotwitter.setAttribute('scale', '0.25 0.25 0.25');
+                //Ajusta los atributos de gmail
+                objetogmail.setAttribute('position', '2 0 2');
+                objetogmail.setAttribute('scale', '0.15 0.15 0.15');
+            } else {
+                // Ajusta los atributos del texto para pantallas pequeñas
+                textElement.setAttribute('position', '0 0 0');                
+                textElement.setAttribute('scale', '8 4 8');
+                textElement.setAttribute('width', '1');
+                // Ajusta los atributos del fondo para pantallas pequeñas
+                backgroundElement.setAttribute('scale', '8 3 1');
+                backgroundElement.setAttribute('position', '3 -0.1 -0.1');
+                // Ajusta los atributos de la imagen del logo para pantallas pequeñas
+                logoImage.setAttribute('position', '6 0 -1');
+                logoImage.setAttribute('scale', '1.8 1.2 0.8');
+                //Ajusta lod atributos de whatsapp 
+                objetowhatsapp.setAttribute('position', '0.8 0 1.9');
+                objetowhatsapp.setAttribute('scale', '0.4 0.4 0.4');
+                //Ajusta los atributos de instagram
+                objetoinstagram.setAttribute('position', '-0.3 0 1.9');
+                objetoinstagram.setAttribute('scale', '0.5 0.5 0.45');
+                //Ajusta los atributos de facebook
+                objetofacebook.setAttribute('position', '4.6 0 2.3');
+                objetofacebook.setAttribute('scale','0.38 0.38 0.38');
+                //Ajusta los atributos de twitter
+                objetotwitter.setAttribute('position', '2 -2.5 3.2');
+                objetotwitter.setAttribute('scale', '0.45 0.45 0.45');
+                //Ajusta los atributos de gmail
+                objetogmail.setAttribute('position', '3.3 0 1.9');
+                objetogmail.setAttribute('scale', '0.3 0.3 0.3');
+  
+            }
+        }
+    
+        // Ajusta los atributos al cargar la página y al redimensionar la ventana
+        window.addEventListener('load', adjustAttributes); // Llama a la función cuando la página se carga
+        window.addEventListener('resize', adjustAttributes); // Llama a la función cuando la ventana cambia de tamaño
+    </script>
+    </body>
+    </html>
+    

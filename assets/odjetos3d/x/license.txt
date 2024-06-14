@@ -1,0 +1,11 @@
+Model Information:
+* title:	3D Twitter X Logo
+* source:	https://sketchfab.com/3d-models/3d-twitter-x-logo-814e35fbc3e543ac91ca959355f251c0
+* author:	pengedarseni (https://sketchfab.com/pengedarseni)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "3D Twitter X Logo" (https://sketchfab.com/3d-models/3d-twitter-x-logo-814e35fbc3e543ac91ca959355f251c0) by pengedarseni (https://sketchfab.com/pengedarseni) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8"> <!-- Establece la codificación de caracteres a UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Configuración de la vista para asegurar la compatibilidad en dispositivos móviles -->
+    <title>Registro de un invitado</title> <!-- Título de la página -->
+    <style>
+        /* Estilos para el cuerpo del documento */
+        body {
+            display: flex; /* Centra el formulario horizontalmente */
+            justify-content: center; /* Centra el formulario horizontalmente */
+            align-items: center; /* Centra el formulario verticalmente */
+            height: 105vh; /* Altura del cuerpo del documento */
+            margin: 0; /* Sin márgenes */
+            font-family: Arial, sans-serif; /* Fuente del texto */
+            background-color: rgb(39, 153, 206); /* Color de fondo */
+            background-size: cover; /* Ajusta el tamaño del fondo */
+        }
+
+        /* Estilos para el formulario de registro */
+        #register-form {
+            display: flex; /* Flexbox para el formulario */
+            flex-direction: column; /* Elementos en columna */
+            align-items: center; /* Centra los elementos horizontalmente */
+            background-color: #f2f2f2; /* Color de fondo del formulario */
+            padding: 20px; /* Espaciado interior del formulario */
+            border-radius: 10px; /* Bordes redondeados */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra alrededor del formulario */
+            width: 90%; /* Ancho del formulario */
+            max-width: 400px; /* Ancho máximo del formulario */
+            box-sizing: border-box; /* Incluye el relleno y el borde en el ancho total */
+        }
+
+        /* Estilos para el encabezado del formulario */
+        #register-form h1 {
+            font-size: 24px; /* Tamaño de fuente del encabezado */
+            margin-bottom: 20px; /* Espacio debajo del encabezado */
+            text-align: center; /* Centra el texto */
+            width: 100%; /* Ancho completo */
+        }
+
+        /* Estilos para los campos de entrada del formulario */
+        #register-form input[type="text"],
+        #register-form input[type="number"],
+        #register-form input[type="email"],
+        #register-form select {
+            margin-bottom: 10px; /* Espacio debajo de cada campo */
+            padding: 10px; /* Relleno dentro de los campos */
+            width: 100%; /* Ancho completo */
+            border: 1px solid #ccc; /* Borde gris claro */
+            border-radius: 5px; /* Bordes redondeados */
+            box-sizing: border-box; /* Incluye el relleno y el borde en el ancho total */
+        }
+
+        /* Estilos para el botón de envío y el botón Leer Qr */
+        #register-form input[type="submit"],
+        #register-form button {
+            padding: 10px 20px; /* Relleno dentro del botón */
+            background-color: rgb(39, 153, 206); /* Color de fondo */
+            color: white; /* Color del texto */
+            border: none; /* Sin borde */
+            border-radius: 5px; /* Bordes redondeados */
+            cursor: pointer; /* Cursor de mano al pasar sobre el botón */
+            text-align: center; /* Centra el texto */
+            text-decoration: none; /* Sin subrayado */
+            display: inline-block; /* Mostrar como elemento en línea */
+            margin-top: 10px; /* Espacio encima del botón */
+            width: 100%; /* Ancho completo */
+            max-width: 300px; /* Ancho máximo del botón */
+            box-sizing: border-box; /* Incluye el relleno y el borde en el ancho total */
+        }
+
+        /* Estilos para el botón de envío y el botón Leer Qr cuando se pasa el cursor sobre ellos */
+        #register-form input[type="submit"]:hover,
+        #register-form button:hover {
+            background-color: #45a049; /* Cambia el color de fondo al pasar el cursor */
+        }
+
+        /* Estilos para los enlaces dentro de los botones */
+        #register-form button a {
+            color: white; /* Color del texto */
+            text-decoration: none; /* Sin subrayado */
+            display: block; /* Mostrar como bloque */
+            width: 100%; /* Ancho completo */
+        }
+
+        /* Estilos para el mensaje de error */
+        #message {
+            margin-top: 10px; /* Espacio encima del mensaje */
+            color: #ff0000; /* Color rojo */
+            text-align: center; /* Centra el texto */
+            width: 100%; /* Ancho completo */
+        }
+
+        /* Media query para dispositivos móviles */
+        @media (max-width: 900px) {
+            body {
+                padding: 40px; /* Espaciado alrededor del cuerpo */
+            }
+
+            #register-form {
+                width: 100%; /* Ancho completo */
+                height: 110%; /* Altura ajustada */
+                padding: 15px; /* Espaciado interior */
+            }
+
+            #register-form h1 {
+                font-size: 20px; /* Tamaño de fuente más pequeño */
+            }
+
+            #register-form input[type="text"],
+            #register-form input[type="number"],
+            #register-form input[type="email"],
+            #register-form select {
+                font-size: 16px; /* Tamaño de fuente más pequeño */
+                padding: 8px; /* Relleno más pequeño */
+            }
+
+            #register-form input[type="submit"],
+            #register-form button {
+                font-size: 16px; /* Tamaño de fuente más pequeño */
+                padding: 8px; /* Relleno más pequeño */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Formulario de registro -->
+    <form id="register-form" method="POST">
+        <h1>Registro de un invitado</h1> <!-- Título del formulario -->
+        Cedula:<input type="text" name="ced" id="ced" required pattern="\d+"><br /> <!-- Campo para la cédula, solo acepta números -->
+        Tipo documento:
+        <select name="ti_do" id="ti_do" required> <!-- Campo de selección para el tipo de documento -->
+            <option value="">Seleccione...</option>
+            <option value="CC">Cédula de Ciudadanía</option>
+            <option value="CE">Cédula de Extranjería</option>
+            <option value="TI">Tarjeta de Identidad</option>
+            <option value="PAS">Pasaporte</option>
+            <option value="NIT">NIT</option>
+        </select><br />
+        Nombre:<input type="text" name="nom" id="nom" required><br /> <!-- Campo para el nombre -->
+        Telefono:<input type="text" name="tel" id="tel" required pattern="\d+" ><br /> <!-- Campo para el teléfono, solo acepta números -->
+        Descripcion:<input type="text" name="des" id="des" required><br /> <!-- Campo para la descripción -->
+        Profesion:<input type="text" name="pro" id="pro" required><br /> <!-- Campo para la profesión -->
+        Email:<input type="email" name="email" id="email" required><br /> <!-- Campo para el correo electrónico -->
+        Patrocinador:<input type="text" name="pat" id="pat" required><br /> <!-- Campo para el patrocinador -->
+        <h5 id="message"></h5> <!-- Campo para mostrar mensajes de error -->
+        <input type="submit" value="Registrarse" id="submit-button"> <!-- Botón de envío -->
+
+        <button> <!-- Botón para leer QR -->
+            <a href="/views/index">Leer Qr</a>
+        </button>
+    </form>
+
+    <script>
+        // Agrega un evento 'input' al campo de cédula para detectar cambios en su valor
+        document.getElementById('ced').addEventListener('input', function (e) {
+            // Dentro de la función del evento, reemplaza todos los caracteres que no son dígitos con una cadena vacía
+            this.value = this.value.replace(/\D/g, '');
+        });
+    
+        // Agrega un evento 'input' al campo de teléfono para detectar cambios en su valor
+        document.getElementById('tel').addEventListener('input', function (e) {
+            // Dentro de la función del evento, reemplaza todos los caracteres que no son dígitos con una cadena vacía
+            this.value = this.value.replace(/\D/g, '');
+        });
+    
+        // Agrega un evento 'submit' al formulario de registro para manejar su envío
+        document.getElementById('register-form').addEventListener('submit', function(event) {
+            // Previene el comportamiento predeterminado de enviar el formulario
+            event.preventDefault();
+            // Establece el mensaje de estado del envío de datos
+            document.getElementById('message').innerText = 'Enviando datos...';
+    
+            // Crea un objeto FormData con los datos del formulario
+            const formData = new FormData(this);
+    
+            // Realiza una solicitud fetch al servidor con los datos del formulario
+            fetch('/validar', {
+                method: 'POST', // Método de solicitud POST
+                body: new URLSearchParams(formData) // Cuerpo de la solicitud, convierte el objeto FormData a una URLSearchParams
+            })
+            .then(response => response.json()) // Convierte la respuesta a formato JSON
+            .then(data => {
+                // Maneja la respuesta del servidor
+                if (data.success) { // Si la propiedad 'success' en la respuesta es verdadera
+                    // Establece un mensaje de éxito en el elemento de mensaje
+                    document.getElementById('message').innerText = 'Datos almacenados correctamente';
+                    // Limpia todos los campos del formulario
+                    this.reset();
+                } else {
+                    // Si la propiedad 'success' en la respuesta es falsa, muestra un mensaje de error
+                    document.getElementById('message').innerText = 'Error: ' + data.message;
+                }
+            })
+            .catch(error => {
+                // Captura cualquier error que ocurra durante la solicitud y muestra un mensaje de error
+                document.getElementById('message').innerText = 'Error: ' + error.message;
+            });
+        });
+    </script>
+    
+</body>
+</html>
