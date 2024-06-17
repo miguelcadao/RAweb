@@ -12,15 +12,21 @@ const upload = multer({ dest: 'uploads/' });  // Configurar multer para subir ar
 // Configuración de la base de datos
 let conexion;
 try {
-    conexion = mysql.createConnection({
+    /*conexion = mysql.createConnection({
         host: '3.128.217.142',  // Host de la base de datos
         database: 'tecnoparquebucar_Ra_web',  // Nombre de la base de datos
         user: 'tecnoparquebucar_Ra_web',  // Usuario de la base de datos
         password: '*1c!n~E]L6YN'  // Contraseña de la base de datos
+    });*/
+    conexion = mysql.createConnection({
+        host: 'localhost',  // Host de la base de datos
+        database: 'realidad_aumentada',  // Nombre de la base de datos
+        user: 'root',  // Usuario de la base de datos
+        password: ''  // Contraseña de la base de datos
     });
     
 
-    conexion.connect((err) => {
+    conexion.connect((err) => {  
         if (err) {
             console.error('Error al conectar a la base de datos:', err);
             process.exit(1);  // Terminar el proceso si no se puede conectar a la base de datos
@@ -34,7 +40,6 @@ try {
 }
 
 // Middleware
-app.set('view engine', 'ejs');  // Establecer EJS como el motor de plantillas
 app.set('views', path.join(__dirname, 'views'));  // Configurar el directorio de vistas
 
 app.use(express.json());  // Middleware para parsear JSON
@@ -49,13 +54,13 @@ function esNumero(val) {
 }
 
 // Rutas
-app.get('/views/index', function(req, res){
-    res.render('index');  // Renderiza la vista 'index'
-});
+
 
 app.get('/', (req, res) => {
-    res.render('Registro');  // Renderiza la vista 'Registro'
+    res.sendFile(path.join(__dirname, 'views', 'Registro.html','index.html'));  // Enviar archivo HTML
 });
+
+
 
 app.post('/validar', upload.single('image'), (req, res) => {
     const datos = req.body;  // Obtener datos del cuerpo de la solicitud
